@@ -10,6 +10,7 @@ import type { Page } from "patchright";
 import { BrowserManager } from "./browser/session.js";
 import { humanType, randomDelay } from "./browser/stealth.js";
 import { config } from "./config.js";
+import { ERR } from "./errors.js";
 
 const FOLLOW_UP_REMINDER =
   "\n\nEXTREMELY IMPORTANT: Is that ALL you need to know? You can always ask " +
@@ -166,6 +167,31 @@ async function pollStableAnswer(
 }
 
 /**
+ * Detecção best-effort de rate limit / erro do serviço via snackbar/toast.
+ * O texto exato varia e pode mudar; cobrimos PT e EN com palavras-chave.
+ */
+async function detectRateLimit(page: Page): Promise<boolean> {
+  const phrases = [
+    "limit",
+    "limite",
+    "máximo",
+    "maximum",
+    "try again",
+    "mais tarde",
+    "too many",
+    "quota",
+  ];
+  const toasts = await page.$$(
+    'mat-snack-bar-container, .mat-mdc-snack-bar-label, [role="alert"]',
+  );
+  for (const toast of toasts) {
+    const txt = ((await toast.innerText().catch(() => "")) ?? "").toLowerCase();
+    if (txt && phrases.some((p) => txt.includes(p))) return true;
+  }
+  return false;
+}
+
+/**
  * Faz uma pergunta a um notebook e devolve a resposta.
  * @param appendReminder anexa o lembrete de follow-up (padrão). Descrições/Smart
  *   Add passam `false` para obter a resposta crua.
@@ -180,10 +206,15 @@ export async function askNotebookLM(
   const page = await context.newPage();
   try {
     await page.goto(notebookUrl, { waitUntil: "domcontentloaded" });
-    await page.waitForURL(/^https:\/\/notebooklm\.google\.com\//, { timeout: 10_000 });
+    // Se a sessão caiu, o Google redireciona ao login: erro claro e acionável.
+    if (page.url().includes("accounts.google.com")) throw new Error(ERR.sessionExpired);
+    await page
+      .waitForURL(/^https:\/\/notebooklm\.google\.com\//, { timeout: 10_000 })
+      .catch(() => {});
+    if (page.url().includes("accounts.google.com")) throw new Error(ERR.sessionExpired);
 
     const inputSelector = await waitForFirst(page, config.queryInputSelectors, 10_000);
-    if (!inputSelector) throw new Error("Campo de pergunta não encontrado");
+    if (!inputSelector) throw new Error(ERR.inputNotFound);
 
     await page.waitForTimeout(5_000); // deixa o histórico hidratar antes de limpar
     await clearChatHistory(page);
@@ -199,7 +230,11 @@ export async function askNotebookLM(
     await randomDelay(500, 1500);
 
     const answer = await pollStableAnswer(page, baseline.count, baseline.text);
-    if (!answer) throw new Error("Timeout aguardando a resposta do NotebookLM");
+    if (!answer) {
+      // Sem resposta: distingue rate limit (acionável) de lentidão genérica.
+      if (await detectRateLimit(page)) throw new Error(ERR.rateLimit);
+      throw new Error(ERR.answerTimeout);
+    }
     return appendReminder ? answer + FOLLOW_UP_REMINDER : answer;
   } finally {
     await page.close().catch(() => {});

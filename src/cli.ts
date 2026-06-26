@@ -15,6 +15,7 @@ import { NotebookLibrary } from "./notebooks/library.js";
 import { listRemoteNotebooks } from "./notebooks/remote.js";
 import { describeNotebook } from "./notebooks/smart.js";
 import { BrowserManager } from "./browser/session.js";
+import { friendlyError } from "./errors.js";
 
 async function main(): Promise<number> {
   const [command, ...rest] = process.argv.slice(2);
@@ -77,7 +78,7 @@ async function notebooksCommand(args: string[]): Promise<number> {
         }
         return 0;
       } catch (err) {
-        console.error(`Falha ao listar notebooks da conta: ${String(err)}`);
+        console.error(friendlyError(err));
         return 1;
       } finally {
         await browser.close();
@@ -101,7 +102,7 @@ async function notebooksCommand(args: string[]): Promise<number> {
         console.error(await describeNotebook(browser, url));
         return 0;
       } catch (err) {
-        console.error(`Falha ao descrever: ${String(err)}`);
+        console.error(friendlyError(err));
         return 1;
       } finally {
         await browser.close();
@@ -127,9 +128,14 @@ async function notebooksCommand(args: string[]): Promise<number> {
         return 1;
       }
       const topics = (topicsCsv ?? "").split(",").map((t) => t.trim()).filter(Boolean);
-      const nb = lib.add({ url, name, description, topics });
-      console.error(`Adicionado: ${nb.id}`);
-      return 0;
+      try {
+        const nb = lib.add({ url, name, description, topics });
+        console.error(`Adicionado: ${nb.id}`);
+        return 0;
+      } catch (err) {
+        console.error(friendlyError(err));
+        return 1;
+      }
     }
     case "activate": {
       const [id] = rest;
@@ -137,8 +143,13 @@ async function notebooksCommand(args: string[]): Promise<number> {
         console.error("Uso: notebooklm-mcp notebooks activate <id>");
         return 1;
       }
-      console.error(`Ativo: ${lib.activate(id).name}`);
-      return 0;
+      try {
+        console.error(`Ativo: ${lib.activate(id).name}`);
+        return 0;
+      } catch {
+        console.error(`Notebook não encontrado: ${id}`);
+        return 1;
+      }
     }
     case "remove": {
       const [id] = rest;

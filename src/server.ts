@@ -11,6 +11,7 @@ import { listRemoteNotebooks } from "./notebooks/remote.js";
 import { describeNotebook } from "./notebooks/smart.js";
 import { askNotebookLM } from "./ask.js";
 import { authStatus } from "./auth/login.js";
+import { ERR, friendlyError } from "./errors.js";
 
 function text(value: string) {
   return { content: [{ type: "text" as const, text: value }] };
@@ -42,9 +43,7 @@ export function buildServer(): McpServer {
     },
     async ({ question, notebookId, notebookUrl }) => {
       const { authenticated } = authStatus();
-      if (!authenticated) {
-        return text("Não autenticado. Rode `notebooklm-mcp login` uma vez no terminal.");
-      }
+      if (!authenticated) return text(ERR.notAuthenticated);
       const url = notebookUrl ?? library.resolveUrl(notebookId);
       if (!url) {
         return text(
@@ -52,9 +51,13 @@ export function buildServer(): McpServer {
             "notebooklm_add_notebook e ative, ou passe notebookUrl.",
         );
       }
-      const answer = await askNotebookLM(browser, question, url);
-      if (notebookId && library.get(notebookId)) library.markUsed(notebookId);
-      return text(answer);
+      try {
+        const answer = await askNotebookLM(browser, question, url);
+        if (notebookId && library.get(notebookId)) library.markUsed(notebookId);
+        return text(answer);
+      } catch (err) {
+        return text(friendlyError(err));
+      }
     },
   );
 
@@ -90,14 +93,12 @@ export function buildServer(): McpServer {
     },
     async () => {
       const { authenticated } = authStatus();
-      if (!authenticated) {
-        return text("Não autenticado. Rode `notebooklm-mcp login` uma vez no terminal.");
-      }
+      if (!authenticated) return text(ERR.notAuthenticated);
       let remote;
       try {
         remote = await listRemoteNotebooks(browser);
       } catch (err) {
-        return text(`Falha ao listar notebooks da conta: ${String(err)}`);
+        return text(friendlyError(err));
       }
       if (remote.length === 0) {
         return text("Nenhum notebook encontrado na conta (ou o painel não carregou).");
@@ -134,9 +135,7 @@ export function buildServer(): McpServer {
     },
     async ({ notebookUrl, notebookId }) => {
       const { authenticated } = authStatus();
-      if (!authenticated) {
-        return text("Não autenticado. Rode `notebooklm-mcp login` uma vez no terminal.");
-      }
+      if (!authenticated) return text(ERR.notAuthenticated);
       const url = notebookUrl ?? library.resolveUrl(notebookId);
       if (!url) {
         return text("Informe notebookUrl ou notebookId (ou defina um notebook ativo).");
@@ -145,7 +144,7 @@ export function buildServer(): McpServer {
         const description = await describeNotebook(browser, url);
         return text(`${description}\n\n(URL: ${url})`);
       } catch (err) {
-        return text(`Falha ao descrever o notebook: ${String(err)}`);
+        return text(friendlyError(err));
       }
     },
   );
@@ -165,8 +164,12 @@ export function buildServer(): McpServer {
       },
     },
     async ({ url, name, description, topics }) => {
-      const nb = library.add({ url, name, description, topics });
-      return text(`Notebook adicionado: ${nb.id}`);
+      try {
+        const nb = library.add({ url, name, description, topics });
+        return text(`Notebook adicionado: ${nb.id}`);
+      } catch (err) {
+        return text(friendlyError(err)); // ex.: id duplicado
+      }
     },
   );
 
@@ -178,8 +181,12 @@ export function buildServer(): McpServer {
       inputSchema: { notebookId: z.string() },
     },
     async ({ notebookId }) => {
-      const nb = library.activate(notebookId);
-      return text(`Notebook ativo: ${nb.name}`);
+      try {
+        const nb = library.activate(notebookId);
+        return text(`Notebook ativo: ${nb.name}`);
+      } catch {
+        return text(`Notebook não encontrado: ${notebookId}`);
+      }
     },
   );
 
