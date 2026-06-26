@@ -1,0 +1,9 @@
+node_modules/
+dist/
+*.log
+
+# Dados locais sensíveis: cookies de sessão, estado do browser, biblioteca.
+# Por padrão ficam em ~/.notebooklm-mcp, mas ignore também qualquer cópia local.
+data/
+.notebooklm-mcp/
+.env

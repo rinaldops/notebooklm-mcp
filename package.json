@@ -1,0 +1,42 @@
+{
+  "name": "notebooklm-mcp",
+  "version": "0.1.0",
+  "description": "Servidor MCP para Google NotebookLM via automação de browser (Patchright). Respostas ancoradas em fontes, sem API oficial.",
+  "type": "module",
+  "bin": {
+    "notebooklm-mcp": "dist/cli.js"
+  },
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit",
+    "dev": "tsx src/cli.ts",
+    "start": "node dist/cli.js",
+    "login": "tsx src/cli.ts login",
+    "postinstall": "patchright install chromium"
+  },
+  "keywords": [
+    "mcp",
+    "notebooklm",
+    "gemini",
+    "model-context-protocol",
+    "browser-automation"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "patchright": "^1.52.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.0"
+  }
+}
