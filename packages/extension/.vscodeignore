@@ -1,0 +1,7 @@
+# Fora do .vsix: fontes e configs de build (só `dist/` e manifesto vão no pacote).
+src/**
+tsconfig.json
+tsup.config.ts
+.vscodeignore
+**/*.map
+node_modules/.cache/**

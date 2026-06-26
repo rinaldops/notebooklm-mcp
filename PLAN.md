@@ -164,13 +164,16 @@ packages/
       preservado); root `package.json` com `workspaces: ["packages/*"]` e scripts agregados
       (`build`/`typecheck --workspaces`). Build/typecheck/smoke (8 tools via stdio) revalidados.
       `bin`/`npx` do servidor intactos (name `notebooklm-mcp` mantido no package).
-- [ ] **Registro MCP no VS Code**: `contributes.mcpServerDefinitionProviders` (id) +
-      `vscode.lm.registerMcpServerDefinitionProvider` retornando `McpStdioServerDefinition`
-      (`command: node`, `args: [serverPath]`, `cwd`, `env`). `engines.vscode`: `^1.102.0`.
-- [ ] **resolveMcpServerDefinition (lazy)**: garantir login e Chromium presentes antes do start;
-      se faltar login, orientar o comando "NotebookLM: Login".
-- [ ] **Comandos** (substituem o dashboard): `NotebookLM: Login`, `NotebookLM: Status`,
-      `NotebookLM: Listar notebooks da conta`, `NotebookLM: Adicionar notebook (Smart Add)`.
+- [x] **Registro MCP no VS Code**: `contributes.mcpServerDefinitionProviders` (id `notebooklm`)
+      + `vscode.lm.registerMcpServerDefinitionProvider` retornando `McpStdioServerDefinition`.
+      ⚠️ Construtor é POSICIONAL `(label, command, args?, env?, version?)` e `cwd` é propriedade
+      (a forma de objeto da pesquisa estava errada — verificado no `@types/vscode` 1.125).
+      `engines.vscode`: `^1.102.0`. Ver `packages/extension/src/mcp-provider.ts`.
+- [~] **resolveMcpServerDefinition (lazy)**: stub presente (retorna o server); falta garantir
+      login + Chromium antes do start.
+- [x] **Comandos** (substituem o dashboard): `NotebookLM: Login`, `Status`, `Listar notebooks
+      da conta` — rodam o CLI do servidor num terminal integrado. Ver `commands.ts`.
+      (Falta `Adicionar notebook (Smart Add)`.)
 - [ ] **Auto-config p/ clientes não-VS-Code** (Claude Code é o nosso caso!): escrever o
       `mcp.json`/config de Cursor, Claude Code, etc. entre marcadores (upsert idempotente).
       ⚠️ A API do VS Code (`registerMcpServerDefinitionProvider`) só serve o agente do PRÓPRIO

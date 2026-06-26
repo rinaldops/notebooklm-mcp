@@ -1,0 +1,64 @@
+{
+  "name": "notebooklm-mcp-vscode",
+  "displayName": "NotebookLM MCP",
+  "description": "Servidor MCP para o Google NotebookLM, empacotado e auto-configurado como extensão.",
+  "version": "0.1.0",
+  "publisher": "TODO-PUBLISHER",
+  "private": true,
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.102.0",
+    "node": ">=20"
+  },
+  "categories": [
+    "AI",
+    "Other"
+  ],
+  "keywords": [
+    "mcp",
+    "notebooklm",
+    "gemini",
+    "model-context-protocol"
+  ],
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "notebooklm.login",
+        "title": "NotebookLM: Login (Google)"
+      },
+      {
+        "command": "notebooklm.status",
+        "title": "NotebookLM: Status da sessão"
+      },
+      {
+        "command": "notebooklm.listRemote",
+        "title": "NotebookLM: Listar notebooks da conta"
+      }
+    ],
+    "mcpServerDefinitionProviders": [
+      {
+        "id": "notebooklm",
+        "label": "NotebookLM MCP"
+      }
+    ]
+  },
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "package": "vsce package --no-dependencies"
+  },
+  "dependencies": {
+    "notebooklm-mcp": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "@types/vscode": "^1.102.0",
+    "@vscode/vsce": "^3.2.0",
+    "tsup": "^8.3.0",
+    "typescript": "^5.8.0"
+  }
+}

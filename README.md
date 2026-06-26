@@ -65,8 +65,10 @@ Veja [PLAN.md](./PLAN.md) para o plano de desenvolvimento e o estado de cada par
 
 ## Dev
 
-Monorepo com npm workspaces. O servidor vive em [packages/mcp-server](packages/mcp-server);
-a extensão VS Code (Fase 5) virá em `packages/extension`.
+Monorepo com npm workspaces:
+- [packages/mcp-server](packages/mcp-server) — o servidor MCP (publicável via `npx`).
+- [packages/extension](packages/extension) — a extensão VS Code (registra/auto-configura o
+  servidor). Build com `tsup`; depurar com F5 (Extension Development Host).
 
 ```bash
 npm install                 # instala todos os workspaces (a partir da raiz)
