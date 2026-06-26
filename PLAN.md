@@ -1,7 +1,15 @@
 # Plano de Desenvolvimento — notebooklm-mcp
 
-Servidor MCP standalone (TS/Node + Patchright, stdio), port da skill Python `notebooklm`.
-Sem dashboard, sem extensão VSCode, configurado por env/CLI. Distribuição via `npx`.
+Servidor MCP (TS/Node + Patchright, stdio), port da skill Python `notebooklm`, **empacotado
+como extensão VS Code** no modelo do VSCode-Perplexity-MCP.
+
+**Distribuição dupla:** (1) extensão VS Code (Marketplace, botão "Install", auto-configura o
+servidor) e (2) `npx`/npm para clientes MCP fora do VS Code. O servidor é o mesmo núcleo nos
+dois casos.
+
+**SEM dashboard (UI React), COM extensão.** Dashboard e extensão são coisas DIFERENTES (ver
+"Contexto da decisão"): o dashboard é a UI visual (descartada); a extensão é o empacotamento +
+auto-config (mantida — é a ideia central do projeto).
 
 ## Referências de código-fonte (LER ANTES DE COMEÇAR)
 
@@ -17,19 +25,33 @@ Este projeto é um **port**. Os dois códigos de origem são essenciais e ficam 
      resolvida lá — não reinvente, traduza.
    - Dados existentes reaproveitáveis: `data/library.json` (mesmo formato deste projeto).
 
-2. **VSCode-Perplexity-MCP (inspiração de arquitetura; só para a Fase 4):**
+2. **VSCode-Perplexity-MCP (referência de arquitetura da EXTENSÃO — Fase 5):**
    `https://github.com/Automations-Project/VSCode-Perplexity-MCP` (licença MIT).
-   - Referência para: cifrar sessão (`packages/mcp-server/src/vault.js`), persistência de
-     cookies (`cookie-jar.js`), e auto-config multi-IDE (`packages/extension/src/auto-config`).
+   - Monorepo com npm workspaces: `packages/mcp-server` (motor), `packages/extension`
+     (extension host + registro MCP + auto-config), `packages/webview` (**dashboard React —
+     NÃO vamos replicar**), `packages/shared` (tipos/constantes).
+   - Referência para: registro do MCP via API do VS Code (`mcpServerDefinitionProviders` +
+     `registerMcpServerDefinitionProvider`), auto-config multi-IDE escrevendo `mcp.json`
+     (`packages/extension/src/auto-config`), cifrar sessão (`vault.js`, keytar).
+   - Empacotamento: **tsup** (2 alvos: extension host CJS + server ESM), `@vscode/vsce` p/ o
+     `.vsix`; Patchright fica como dep externa (não bundlar — quebra ao ler `package.json` em
+     runtime); Chromium NÃO embarcado no `.vsix` (baixar sob demanda na ativação).
    - **Não** copiar o cliente Perplexity (`client.ts`): é REST/SSE+Cloudflare, paradigma
      OPOSTO ao do NotebookLM (que é DOM-driven). Inútil aqui.
 
 ## Contexto da decisão (por quê)
 
 TS e não Python: menor atrito de instalação para o público MCP/Claude Code (sempre tem Node).
-Servidor MCP standalone e não fork da extensão Perplexity: o valor do fork estava no
-dashboard+extensão, que foram descartados (parametrização via env/CLI basta). Sem dashboard
-por escolha explícita. Histórico completo da decisão não é necessário para desenvolver.
+
+**Dashboard ≠ Extensão (correção importante — o plano anterior conflava os dois):**
+- **Dashboard** = a UI visual em React (no Perplexity, `packages/webview`). **DESCARTADO** por
+  escolha explícita: a configuração por env/CLI/comandos basta; não queremos um painel gráfico.
+- **Extensão** = o empacotamento que vira "Install" no VS Code Marketplace, registra o servidor
+  MCP no IDE e auto-configura outros clientes (no Perplexity, `packages/extension`). **MANTIDA** —
+  é a forma de distribuição desejada desde o início (modelo Perplexity MCP).
+
+Ou seja: cortar o dashboard NÃO implica cortar a extensão. O servidor MCP continua existindo e
+sendo reaproveitável via `npx`; a extensão é uma camada de distribuição/UX por cima dele.
 
 ## Princípios
 
@@ -117,7 +139,45 @@ src/
       próprio notebook o que ele contém (nome/descrição/tópicos) para catalogar com metadados
       precisos. Propósito único (não grava); compõe com `list_remote_notebooks` e `add_notebook`.
       `askNotebookLM` ganhou `appendReminder` p/ resposta crua. Validado ao vivo. Ver `smart.ts`.
-- [ ] Auto-config opcional para outros IDEs (referência: `auto-config` do Perplexity-MCP).
+- [ ] Auto-config para outros IDEs → movido para a Fase 5 (parte central da extensão).
+
+### Fase 5 — Extensão VS Code (modelo Perplexity) ⭐ objetivo principal
+
+Migrar para monorepo e empacotar o servidor como extensão. O servidor atual (`src/`) vira
+`packages/mcp-server`; nasce `packages/extension`. SEM `packages/webview` (dashboard).
+
+Arquitetura alvo:
+```
+packages/
+├── mcp-server/     # o código de hoje (src/), publicável no npm + embarcado na extensão
+└── extension/      # extension host VS Code (CJS via tsup)
+    ├── src/extension.ts        # activate(): registra o provider MCP + comandos
+    ├── src/mcp-provider.ts     # registerMcpServerDefinitionProvider → McpStdioServerDefinition
+    ├── src/auto-config/        # escreve mcp.json de Cursor/Claude Code/etc.
+    └── src/browser/ensure.ts   # baixa Chromium sob demanda (globalStorage) se faltar
+```
+
+- [ ] **Monorepo**: npm workspaces; mover `src/` → `packages/mcp-server`; build order
+      `mcp-server → extension`. Manter `npx`/`bin` do servidor funcionando.
+- [ ] **Registro MCP no VS Code**: `contributes.mcpServerDefinitionProviders` (id) +
+      `vscode.lm.registerMcpServerDefinitionProvider` retornando `McpStdioServerDefinition`
+      (`command: node`, `args: [serverPath]`, `cwd`, `env`). `engines.vscode`: `^1.102.0`.
+- [ ] **resolveMcpServerDefinition (lazy)**: garantir login e Chromium presentes antes do start;
+      se faltar login, orientar o comando "NotebookLM: Login".
+- [ ] **Comandos** (substituem o dashboard): `NotebookLM: Login`, `NotebookLM: Status`,
+      `NotebookLM: Listar notebooks da conta`, `NotebookLM: Adicionar notebook (Smart Add)`.
+- [ ] **Auto-config p/ clientes não-VS-Code** (Claude Code é o nosso caso!): escrever o
+      `mcp.json`/config de Cursor, Claude Code, etc. entre marcadores (upsert idempotente).
+      ⚠️ A API do VS Code (`registerMcpServerDefinitionProvider`) só serve o agente do PRÓPRIO
+      VS Code; Claude Code/Cursor usam seus próprios arquivos de config.
+- [ ] **Empacotamento**: tsup (extension host CJS + server ESM); Patchright como **external**
+      (não bundlar — lê `package.json` em runtime); vendorizar `node_modules` de produção no
+      `.vsix`; `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1` no build (Chromium NÃO entra no `.vsix`).
+- [ ] **Chromium sob demanda**: `postinstall` NÃO roda em extensão → baixar via código na
+      ativação/resolve, para `globalStorage`; preferir Chrome/Edge do sistema quando existir.
+- [ ] **Publicar**: `@vscode/vsce` → VS Code Marketplace (+ Open VSX). Escolher `publisher`.
+
+Riscos novos da Fase 5: ver itens 7–9 em "Riscos".
 
 ## Superfície de tools (contrato)
 
@@ -139,6 +199,15 @@ biblioteca + status. Toda resposta de `ask` inclui o lembrete de follow-up da sk
 5. **ToS / conta (aceito).** Mesmo risco do Perplexity-MCP; documentado no README.
 6. **Versões de deps (baixo).** As versões em `package.json` são estimadas; ajustar ao rodar
    `npm install` (em especial `@modelcontextprotocol/sdk` e `patchright`).
+7. **Chromium em extensão (alto — Fase 5).** Sem `postinstall`, o download tem de ser código
+   explícito na ativação; cuidado com firewall corporativo, disco e UX do 1º run. Mitigar
+   reusando browser do sistema + barra de progresso. Não embarcar no `.vsix` (~150–300 MB).
+8. **Bundle quebrando Patchright (médio — Fase 5).** esbuild/tsup quebram libs que leem o
+   próprio `package.json` em runtime (playwright/patchright). Manter como dep externa.
+9. **Fragmentação de clientes MCP (médio — Fase 5).** A API nativa só cobre o VS Code; para
+   Claude Code/Cursor é preciso escrever os `mcp.json` deles. Não há atalho único.
+10. **API MCP do VS Code nova (baixo).** Houve regressão pontual em 1.102.0; travar `engines`
+    em versão testada e degradar com mensagem clara.
 
 ## Verificação
 
