@@ -94,10 +94,16 @@ src/
 - [x] Confirmar polling estável não pega resposta antiga
 
 ### Fase 3 — Tools MCP + empacotamento
-- [ ] Testar as 6 tools via `claude mcp add` no Claude Code
-- [ ] Tratamento de erros amigável (não autenticado, notebook inexistente, rate limit)
-- [ ] `bin` com shebang funcionando via `npx`
-- [ ] Publicar no npm (`npm publish`) — escolher nome do pacote/escopo
+- [x] **Testar as 8 tools** (eram 6; +list_remote +describe) — validado via cliente MCP stdio
+      real (`@modelcontextprotocol/sdk` Client): `tools/list` mostra as 8, `auth_status`,
+      `list_notebooks` e `list_remote_notebooks` (browser quente) respondem pelo protocolo.
+      Falta só o teste no IDE de fato (`claude mcp add`), mas o servidor está provado.
+- [x] **Tratamento de erros amigável** (não autenticado, sessão expirada, rate limit,
+      timeout, Chromium ausente, notebook inexistente, id duplicado) — ver `src/errors.ts`.
+- [x] **`bin` com shebang funcionando** — `dist/cli.js` tem `#!/usr/bin/env node`; o cliente
+      stdio sobe o servidor via `node dist/cli.js` sem ajustes.
+- [ ] Publicar no npm (`npm publish`) — escolher nome do pacote/escopo. PRONTO para publicar;
+      aguarda decisão do nome e conta npm.
 
 ### Fase 4 — Melhorias (opcional)
 - [x] **Descoberta de notebooks da conta** (`notebooklm_list_remote_notebooks` + CLI
