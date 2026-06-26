@@ -13,6 +13,7 @@ import { startServer } from "./server.js";
 import { interactiveLogin, authStatus, validateAuth } from "./auth/login.js";
 import { NotebookLibrary } from "./notebooks/library.js";
 import { listRemoteNotebooks } from "./notebooks/remote.js";
+import { describeNotebook } from "./notebooks/smart.js";
 import { BrowserManager } from "./browser/session.js";
 
 async function main(): Promise<number> {
@@ -82,6 +83,30 @@ async function notebooksCommand(args: string[]): Promise<number> {
         await browser.close();
       }
     }
+    case "describe": {
+      // notebooks describe <url|id>
+      const [target] = rest;
+      const { authenticated } = authStatus();
+      if (!authenticated) {
+        console.error("Não autenticado. Rode: notebooklm-mcp login");
+        return 1;
+      }
+      const url = target?.startsWith("http") ? target : lib.resolveUrl(target);
+      if (!url) {
+        console.error("Uso: notebooklm-mcp notebooks describe <url|id>");
+        return 1;
+      }
+      const browser = new BrowserManager();
+      try {
+        console.error(await describeNotebook(browser, url));
+        return 0;
+      } catch (err) {
+        console.error(`Falha ao descrever: ${String(err)}`);
+        return 1;
+      } finally {
+        await browser.close();
+      }
+    }
     case "list": {
       const items = lib.list();
       if (items.length === 0) {
@@ -125,7 +150,7 @@ async function notebooksCommand(args: string[]): Promise<number> {
       return 0;
     }
     default:
-      console.error("Subcomandos: list | remote | add | activate | remove");
+      console.error("Subcomandos: list | remote | describe | add | activate | remove");
       return 1;
   }
 }

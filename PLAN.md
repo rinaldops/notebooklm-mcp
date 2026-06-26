@@ -56,7 +56,8 @@ src/
 │   └── stealth.ts      # humanType / delays                   ← port StealthUtils
 └── notebooks/
     ├── library.ts      # CRUD da biblioteca (library.json)    ← port notebook_manager.py
-    └── remote.ts       # descobre notebooks da CONTA (raspa o painel)  ← novo (sem origem .py)
+    ├── remote.ts       # descobre notebooks da CONTA (raspa o painel)  ← novo (sem origem .py)
+    └── smart.ts        # Smart Add: descreve um notebook p/ catalogar  ← port do fluxo SMART ADD
 ```
 
 ## Mapa Python → TypeScript
@@ -106,7 +107,10 @@ src/
 - [ ] Sessão conversacional persistente (port de `browser_session.py`): manter uma página
       por notebook para follow-ups com memória, em vez de limpar histórico a cada pergunta.
 - [ ] Cifrar `state.json` (referência: `vault.js` do Perplexity-MCP, MIT — copiar pontual).
-- [ ] Smart Add: descobrir conteúdo do notebook perguntando antes de catalogar.
+- [x] **Smart Add** (`notebooklm_describe_notebook` + CLI `notebooks describe`): pergunta ao
+      próprio notebook o que ele contém (nome/descrição/tópicos) para catalogar com metadados
+      precisos. Propósito único (não grava); compõe com `list_remote_notebooks` e `add_notebook`.
+      `askNotebookLM` ganhou `appendReminder` p/ resposta crua. Validado ao vivo. Ver `smart.ts`.
 - [ ] Auto-config opcional para outros IDEs (referência: `auto-config` do Perplexity-MCP).
 
 ## Superfície de tools (contrato)

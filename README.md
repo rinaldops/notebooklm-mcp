@@ -25,9 +25,19 @@ claude mcp add notebooklm -- npx -y notebooklm-mcp
 
 # Gerência da biblioteca (opcional, também há tools MCP equivalentes)
 npx notebooklm-mcp notebooks add "<url>" "Meu Notebook" "Descrição" "topico1,topico2"
-npx notebooklm-mcp notebooks list      # biblioteca local
-npx notebooklm-mcp notebooks remote    # todos os notebooks da conta
+npx notebooklm-mcp notebooks list          # biblioteca local
+npx notebooklm-mcp notebooks remote        # todos os notebooks da conta
+npx notebooklm-mcp notebooks describe <url> # Smart Add: descobre metadados do notebook
 ```
+
+### Smart Add (catalogar com metadados automáticos)
+
+Fluxo recomendado para popular a biblioteca sem inventar descrições:
+
+1. `notebooks remote` (ou a tool `notebooklm_list_remote_notebooks`) → pega a URL.
+2. `notebooks describe <url>` (ou `notebooklm_describe_notebook`) → o próprio NotebookLM
+   descreve nome, conteúdo e tópicos.
+3. `notebooks add <url> <name> <description> <topics>` com base no passo 2.
 
 ## Tools expostas
 
@@ -36,6 +46,7 @@ npx notebooklm-mcp notebooks remote    # todos os notebooks da conta
 | `notebooklm_ask` | Pergunta a um notebook (ativo, por id ou por URL) |
 | `notebooklm_list_notebooks` | Lista a biblioteca local |
 | `notebooklm_list_remote_notebooks` | Descobre TODOS os notebooks da conta (raspa o painel) |
+| `notebooklm_describe_notebook` | Smart Add: pergunta ao notebook o que ele contém (nome/descrição/tópicos) |
 | `notebooklm_add_notebook` | Adiciona notebook |
 | `notebooklm_activate_notebook` | Define o notebook ativo |
 | `notebooklm_remove_notebook` | Remove notebook |

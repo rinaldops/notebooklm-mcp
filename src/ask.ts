@@ -165,11 +165,16 @@ async function pollStableAnswer(
   return null;
 }
 
-/** Faz uma pergunta a um notebook e devolve a resposta (com lembrete de follow-up). */
+/**
+ * Faz uma pergunta a um notebook e devolve a resposta.
+ * @param appendReminder anexa o lembrete de follow-up (padrão). Descrições/Smart
+ *   Add passam `false` para obter a resposta crua.
+ */
 export async function askNotebookLM(
   browser: BrowserManager,
   question: string,
   notebookUrl: string,
+  appendReminder = true,
 ): Promise<string> {
   const context = await browser.getContext();
   const page = await context.newPage();
@@ -195,7 +200,7 @@ export async function askNotebookLM(
 
     const answer = await pollStableAnswer(page, baseline.count, baseline.text);
     if (!answer) throw new Error("Timeout aguardando a resposta do NotebookLM");
-    return answer + FOLLOW_UP_REMINDER;
+    return appendReminder ? answer + FOLLOW_UP_REMINDER : answer;
   } finally {
     await page.close().catch(() => {});
   }

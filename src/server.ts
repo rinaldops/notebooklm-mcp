@@ -8,6 +8,7 @@ import { z } from "zod";
 import { BrowserManager } from "./browser/session.js";
 import { NotebookLibrary } from "./notebooks/library.js";
 import { listRemoteNotebooks } from "./notebooks/remote.js";
+import { describeNotebook } from "./notebooks/smart.js";
 import { askNotebookLM } from "./ask.js";
 import { authStatus } from "./auth/login.js";
 
@@ -108,6 +109,44 @@ export function buildServer(): McpServer {
         return `• ${nb.title || "(sem título)"}${src}${inLib}\n  ${nb.url}`;
       });
       return text(`${remote.length} notebook(s) na conta:\n\n${lines.join("\n")}`);
+    },
+  );
+
+  server.registerTool(
+    "notebooklm_describe_notebook",
+    {
+      title: "Descrever notebook (Smart Add)",
+      description:
+        "Pergunta ao próprio NotebookLM o que um notebook contém e retorna nome, " +
+        "descrição e tópicos sugeridos. Use ANTES de notebooklm_add_notebook para " +
+        "catalogar com metadados precisos (Smart Add), em vez de inventá-los. " +
+        "Aceita notebookUrl (ex.: vindo de notebooklm_list_remote_notebooks) ou notebookId.",
+      inputSchema: {
+        notebookUrl: z
+          .string()
+          .optional()
+          .describe("URL do notebook a descrever (tem prioridade sobre o id)."),
+        notebookId: z
+          .string()
+          .optional()
+          .describe("ID na biblioteca (opcional; usa o ativo se ambos omitidos)."),
+      },
+    },
+    async ({ notebookUrl, notebookId }) => {
+      const { authenticated } = authStatus();
+      if (!authenticated) {
+        return text("Não autenticado. Rode `notebooklm-mcp login` uma vez no terminal.");
+      }
+      const url = notebookUrl ?? library.resolveUrl(notebookId);
+      if (!url) {
+        return text("Informe notebookUrl ou notebookId (ou defina um notebook ativo).");
+      }
+      try {
+        const description = await describeNotebook(browser, url);
+        return text(`${description}\n\n(URL: ${url})`);
+      } catch (err) {
+        return text(`Falha ao descrever o notebook: ${String(err)}`);
+      }
     },
   );
 
