@@ -85,11 +85,11 @@ src/
 - [x] **Risco**: 2FA / consent / "verifique que é você" do Google. Testar conta real.
 
 ### Fase 2 — Pergunta ponta a ponta
-- [ ] `askNotebookLM` responde via browser quente num notebook real
-- [ ] **Validar seletores ao vivo** (`queryInputSelectors`, `responseSelectors`,
+- [x] `askNotebookLM` responde via browser quente num notebook real
+- [x] **Validar seletores ao vivo** (`queryInputSelectors`, `responseSelectors`,
       `conversationOptionsSelector`) — provavelmente diferem do PT/EN; ajustar.
-- [ ] Resolver i18n do `clearChatHistory` (ver Riscos)
-- [ ] Confirmar polling estável não pega resposta antiga
+- [x] Resolver i18n do `clearChatHistory` (ver Riscos) — PT validado ao vivo; fallback EN.
+- [x] Confirmar polling estável não pega resposta antiga
 
 ### Fase 3 — Tools MCP + empacotamento
 - [ ] Testar as 6 tools via `claude mcp add` no Claude Code
@@ -115,10 +115,9 @@ biblioteca + status. Toda resposta de `ask` inclui o lembrete de follow-up da sk
 1. **Seletores frágeis (alto).** A SPA Angular do NotebookLM muda; os seletores são a
    manutenção recorrente. Centralizados em `config.ts`. Mitigação: múltiplos fallbacks +
    detecção por texto.
-2. **i18n do `clearChatHistory` (médio).** Hoje depende de strings PT ("Excluir histórico",
-   "Excluir", "Opções de conversa"). Opções: (a) detectar idioma da conta; (b) forçar
-   `?hl=en` na URL e usar strings EN; (c) usar posição/ícone do menu em vez de texto.
-   **Decisão pendente.**
+2. **i18n do `clearChatHistory` (médio).** Implementado com strings PT validadas ao vivo e
+   fallbacks EN ("delete chat"/"delete conversation"/"delete"). Para novos locales, ampliar
+   a lista ou migrar para detecção por ícone/posição.
 3. **Login Google (alto).** 2FA/consent não automatizáveis — por isso login é manual/visível
    e isolado no CLI. Validar persistência da sessão entre execuções headless.
 4. **Rate limit (médio).** ~50/dia no free. Tool deve reportar o erro de forma clara.

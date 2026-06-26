@@ -43,29 +43,51 @@ async function clearChatHistory(page: Page): Promise<boolean> {
     await optionsBtn.click();
     await randomDelay(1200, 1800);
 
+    let deleteClicked = false;
     const items = await page.$$('[role="menuitem"], button[mat-menu-item], .mat-mdc-menu-item');
     for (const item of items) {
       const text = (await item.innerText().catch(() => "")) ?? "";
-      if (text.includes("Excluir hist")) {
+      const label = text.toLowerCase();
+      if (
+        label.includes("excluir hist") ||
+        label.includes("delete chat") ||
+        label.includes("delete conversation")
+      ) {
         await item.click();
         await randomDelay(1200, 1800);
+        deleteClicked = true;
         break;
       }
     }
 
+    if (!deleteClicked) {
+      await page.keyboard.press("Escape").catch(() => {});
+      return false;
+    }
+
     // Confirma no diálogo clicando em "Excluir".
-    const dialog = await page.$('mat-dialog-container, [role="dialog"]');
+    const dialog = await page
+      .waitForSelector('mat-dialog-container, [role="dialog"]', { timeout: 3_000 })
+      .catch(() => null);
     if (dialog) {
       for (const btn of await dialog.$$("button")) {
         const label = ((await btn.innerText().catch(() => "")) ?? "").trim();
-        if (label === "Excluir") {
+        const normalized = label.toLowerCase();
+        if (
+          normalized === "excluir" ||
+          normalized === "delete" ||
+          (normalized.includes("excluir") && !normalized.includes("cancel")) ||
+          (normalized.includes("delete") && !normalized.includes("cancel"))
+        ) {
           await btn.click();
           await randomDelay(1500, 2500);
           return true;
         }
       }
+      await page.keyboard.press("Escape").catch(() => {});
+      return false;
     }
-    return false;
+    return true;
   } catch (err) {
     console.error(`[notebooklm] clearChatHistory: ${String(err)}`);
     await page.keyboard.press("Escape").catch(() => {});
@@ -81,10 +103,24 @@ async function snapshotBaseline(
     const els = await page.$$(selector);
     if (els.length > 0) {
       const last = els[els.length - 1]!;
-      return { count: els.length, text: (await last.innerText()).trim() };
+      return { count: els.length, text: cleanResponseText(await last.innerText()) };
     }
   }
   return { count: 0, text: null };
+}
+
+function cleanResponseText(text: string): string {
+  const lines = text
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line && line !== "more_horiz");
+
+  return lines
+    .join("\n")
+    .replace(/\n(\d+)\n([.,;:!?])/g, " [$1]$2")
+    .replace(/\n(\d+)(?=\n|$)/g, " [$1]")
+    .replace(/\n([.,;:!?])/g, "$1")
+    .trim();
 }
 
 /**
@@ -111,7 +147,7 @@ async function pollStableAnswer(
     for (const selector of config.responseSelectors) {
       const els = await page.$$(selector);
       if (els.length === 0) continue;
-      const text = (await els[els.length - 1]!.innerText()).trim();
+      const text = cleanResponseText(await els[els.length - 1]!.innerText());
       const isNew =
         els.length > baselineCount ||
         (baselineText !== null && text !== baselineText);
@@ -146,11 +182,14 @@ export async function askNotebookLM(
 
     await page.waitForTimeout(5_000); // deixa o histórico hidratar antes de limpar
     await clearChatHistory(page);
+    await page.waitForSelector(".cdk-overlay-backdrop", { state: "hidden", timeout: 5_000 }).catch(
+      () => page.keyboard.press("Escape").catch(() => {}),
+    );
     await page.waitForTimeout(1_000);
 
     const baseline = await snapshotBaseline(page);
 
-    await humanType(page, config.queryInputSelectors[0]!, question);
+    await humanType(page, inputSelector, question);
     await page.keyboard.press("Enter");
     await randomDelay(500, 1500);
 
