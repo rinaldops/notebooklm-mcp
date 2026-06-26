@@ -12,6 +12,8 @@
 import { startServer } from "./server.js";
 import { interactiveLogin, authStatus, validateAuth } from "./auth/login.js";
 import { NotebookLibrary } from "./notebooks/library.js";
+import { listRemoteNotebooks } from "./notebooks/remote.js";
+import { BrowserManager } from "./browser/session.js";
 
 async function main(): Promise<number> {
   const [command, ...rest] = process.argv.slice(2);
@@ -40,7 +42,7 @@ async function main(): Promise<number> {
       return 0;
 
     case "notebooks":
-      return notebooksCommand(rest);
+      return await notebooksCommand(rest);
 
     default:
       console.error(`Comando desconhecido: ${command}`);
@@ -49,10 +51,37 @@ async function main(): Promise<number> {
   }
 }
 
-function notebooksCommand(args: string[]): number {
+async function notebooksCommand(args: string[]): Promise<number> {
   const lib = new NotebookLibrary();
   const [sub, ...rest] = args;
   switch (sub) {
+    case "remote": {
+      const { authenticated } = authStatus();
+      if (!authenticated) {
+        console.error("Não autenticado. Rode: notebooklm-mcp login");
+        return 1;
+      }
+      const browser = new BrowserManager();
+      try {
+        const remote = await listRemoteNotebooks(browser);
+        if (remote.length === 0) {
+          console.error("Nenhum notebook encontrado na conta.");
+          return 0;
+        }
+        const knownUrls = new Set(lib.list().map((nb) => nb.url));
+        for (const nb of remote) {
+          const inLib = knownUrls.has(nb.url) ? " [na biblioteca]" : "";
+          const src = nb.sources != null ? ` (${nb.sources} fontes)` : "";
+          console.error(`${nb.id}: ${nb.title || "(sem título)"}${src}${inLib}`);
+        }
+        return 0;
+      } catch (err) {
+        console.error(`Falha ao listar notebooks da conta: ${String(err)}`);
+        return 1;
+      } finally {
+        await browser.close();
+      }
+    }
     case "list": {
       const items = lib.list();
       if (items.length === 0) {
@@ -96,7 +125,7 @@ function notebooksCommand(args: string[]): number {
       return 0;
     }
     default:
-      console.error("Subcomandos: list | add | activate | remove");
+      console.error("Subcomandos: list | remote | add | activate | remove");
       return 1;
   }
 }

@@ -55,7 +55,8 @@ src/
 │   ├── session.ts      # BrowserManager (quente) + cookies #36139 ← port browser_utils.py
 │   └── stealth.ts      # humanType / delays                   ← port StealthUtils
 └── notebooks/
-    └── library.ts      # CRUD da biblioteca (library.json)    ← port notebook_manager.py
+    ├── library.ts      # CRUD da biblioteca (library.json)    ← port notebook_manager.py
+    └── remote.ts       # descobre notebooks da CONTA (raspa o painel)  ← novo (sem origem .py)
 ```
 
 ## Mapa Python → TypeScript
@@ -98,6 +99,10 @@ src/
 - [ ] Publicar no npm (`npm publish`) — escolher nome do pacote/escopo
 
 ### Fase 4 — Melhorias (opcional)
+- [x] **Descoberta de notebooks da conta** (`notebooklm_list_remote_notebooks` + CLI
+      `notebooks remote`): raspa o painel inicial e extrai `{id,title,sources}` de cada card
+      (UUID do atributo `id="project-<uuid>-title"`). Sem origem em `.py` — capacidade nova,
+      validada ao vivo. Cruza com a biblioteca local marcando `[na biblioteca]`. Ver `remote.ts`.
 - [ ] Sessão conversacional persistente (port de `browser_session.py`): manter uma página
       por notebook para follow-ups com memória, em vez de limpar histórico a cada pergunta.
 - [ ] Cifrar `state.json` (referência: `vault.js` do Perplexity-MCP, MIT — copiar pontual).

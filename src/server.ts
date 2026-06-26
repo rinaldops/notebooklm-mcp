@@ -7,6 +7,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod";
 import { BrowserManager } from "./browser/session.js";
 import { NotebookLibrary } from "./notebooks/library.js";
+import { listRemoteNotebooks } from "./notebooks/remote.js";
 import { askNotebookLM } from "./ask.js";
 import { authStatus } from "./auth/login.js";
 
@@ -73,6 +74,40 @@ export function buildServer(): McpServer {
           (nb.description ? ` (${nb.description})` : ""),
       );
       return text(lines.join("\n"));
+    },
+  );
+
+  server.registerTool(
+    "notebooklm_list_remote_notebooks",
+    {
+      title: "Listar notebooks da conta",
+      description:
+        "Descobre TODOS os notebooks da sua conta no NotebookLM (raspando o painel " +
+        "inicial), não apenas os já catalogados na biblioteca local. Útil para achar " +
+        "URLs/IDs de notebooks novos e adicioná-los com notebooklm_add_notebook.",
+      inputSchema: {},
+    },
+    async () => {
+      const { authenticated } = authStatus();
+      if (!authenticated) {
+        return text("Não autenticado. Rode `notebooklm-mcp login` uma vez no terminal.");
+      }
+      let remote;
+      try {
+        remote = await listRemoteNotebooks(browser);
+      } catch (err) {
+        return text(`Falha ao listar notebooks da conta: ${String(err)}`);
+      }
+      if (remote.length === 0) {
+        return text("Nenhum notebook encontrado na conta (ou o painel não carregou).");
+      }
+      const knownUrls = new Set(library.list().map((nb) => nb.url));
+      const lines = remote.map((nb) => {
+        const inLib = knownUrls.has(nb.url) ? " [na biblioteca]" : "";
+        const src = nb.sources != null ? ` — ${nb.sources} fontes` : "";
+        return `• ${nb.title || "(sem título)"}${src}${inLib}\n  ${nb.url}`;
+      });
+      return text(`${remote.length} notebook(s) na conta:\n\n${lines.join("\n")}`);
     },
   );
 

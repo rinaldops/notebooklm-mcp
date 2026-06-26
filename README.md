@@ -25,7 +25,8 @@ claude mcp add notebooklm -- npx -y notebooklm-mcp
 
 # Gerência da biblioteca (opcional, também há tools MCP equivalentes)
 npx notebooklm-mcp notebooks add "<url>" "Meu Notebook" "Descrição" "topico1,topico2"
-npx notebooklm-mcp notebooks list
+npx notebooklm-mcp notebooks list      # biblioteca local
+npx notebooklm-mcp notebooks remote    # todos os notebooks da conta
 ```
 
 ## Tools expostas
@@ -33,7 +34,8 @@ npx notebooklm-mcp notebooks list
 | Tool | Função |
 |------|--------|
 | `notebooklm_ask` | Pergunta a um notebook (ativo, por id ou por URL) |
-| `notebooklm_list_notebooks` | Lista a biblioteca |
+| `notebooklm_list_notebooks` | Lista a biblioteca local |
+| `notebooklm_list_remote_notebooks` | Descobre TODOS os notebooks da conta (raspa o painel) |
 | `notebooklm_add_notebook` | Adiciona notebook |
 | `notebooklm_activate_notebook` | Define o notebook ativo |
 | `notebooklm_remove_notebook` | Remove notebook |
