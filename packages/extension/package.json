@@ -37,6 +37,10 @@
       {
         "command": "notebooklm.listRemote",
         "title": "NotebookLM: Listar notebooks da conta"
+      },
+      {
+        "command": "notebooklm.autoConfigure",
+        "title": "NotebookLM: Auto-configurar clientes MCP (Claude Code/Cursor)"
       }
     ],
     "mcpServerDefinitionProviders": [
@@ -44,7 +48,17 @@
         "id": "notebooklm",
         "label": "NotebookLM MCP"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "NotebookLM MCP",
+      "properties": {
+        "notebooklm.autoConfigureOnActivate": {
+          "type": "boolean",
+          "default": true,
+          "description": "Ao ativar, escreve/atualiza a config MCP do Claude Code e do Cursor no workspace aberto (.mcp.json e .cursor/mcp.json). Idempotente."
+        }
+      }
+    }
   },
   "scripts": {
     "build": "tsup",

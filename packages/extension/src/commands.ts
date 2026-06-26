@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { resolveServerCli } from "./server-path";
+import { autoConfigureWorkspace } from "./auto-config";
 
 /**
  * Roda um subcomando do CLI do servidor num terminal integrado. O login precisa
@@ -23,6 +24,9 @@ export function registerCommands(context: vscode.ExtensionContext): void {
     ),
     vscode.commands.registerCommand("notebooklm.listRemote", () =>
       runInTerminal(["notebooks", "remote"], "NotebookLM: Notebooks da conta"),
+    ),
+    vscode.commands.registerCommand("notebooklm.autoConfigure", () =>
+      autoConfigureWorkspace(false),
     ),
   );
 }

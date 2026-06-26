@@ -174,10 +174,17 @@ packages/
 - [x] **Comandos** (substituem o dashboard): `NotebookLM: Login`, `Status`, `Listar notebooks
       da conta` — rodam o CLI do servidor num terminal integrado. Ver `commands.ts`.
       (Falta `Adicionar notebook (Smart Add)`.)
-- [ ] **Auto-config p/ clientes não-VS-Code** (Claude Code é o nosso caso!): escrever o
-      `mcp.json`/config de Cursor, Claude Code, etc. entre marcadores (upsert idempotente).
-      ⚠️ A API do VS Code (`registerMcpServerDefinitionProvider`) só serve o agente do PRÓPRIO
-      VS Code; Claude Code/Cursor usam seus próprios arquivos de config.
+- [x] **Auto-config p/ clientes não-VS-Code** (Claude Code é o nosso caso!): upsert idempotente
+      em `<workspace>/.mcp.json` (Claude Code) e `<workspace>/.cursor/mcp.json` (Cursor). Para
+      JSON usamos upsert ESTRUTURADO (set `mcpServers[notebooklm]`), não marcadores de texto —
+      preserva todo o resto do arquivo. Roda na ativação (setting `autoConfigureOnActivate`,
+      default true, silencioso quando nada muda) + comando manual. Núcleo puro testado
+      (created/unchanged/updated, preserva terceiros, recusa JSON inválido). Ver
+      `packages/extension/src/auto-config/`. ⚠️ A API nativa do VS Code só serve o agente do
+      próprio VS Code; por isso escrevemos os configs de Claude Code/Cursor.
+      Pendências: escopo é por-workspace (não user-global); Claude Desktop
+      (`claude_desktop_config.json`) ainda não é alvo; entrada usa caminho absoluto do CLI
+      vendorado (reescrito a cada ativação, pois muda com a versão da extensão).
 - [ ] **Empacotamento**: tsup (extension host CJS + server ESM); Patchright como **external**
       (não bundlar — lê `package.json` em runtime); vendorizar `node_modules` de produção no
       `.vsix`; `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1` no build (Chromium NÃO entra no `.vsix`).
