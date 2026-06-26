@@ -65,8 +65,16 @@ Veja [PLAN.md](./PLAN.md) para o plano de desenvolvimento e o estado de cada par
 
 ## Dev
 
+Monorepo com npm workspaces. O servidor vive em [packages/mcp-server](packages/mcp-server);
+a extensão VS Code (Fase 5) virá em `packages/extension`.
+
 ```bash
-npm install
-npm run dev -- login     # roda via tsx, sem build
-npm run build && npm start
+npm install                 # instala todos os workspaces (a partir da raiz)
+npm run build               # builda todos os packages
+npm run typecheck
+
+# Comandos do servidor (rodar dentro do package):
+cd packages/mcp-server
+npm run dev -- login        # login via tsx, sem build
+npm start                   # node dist/cli.js (após build)
 ```

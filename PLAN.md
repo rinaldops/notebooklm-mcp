@@ -64,8 +64,11 @@ sendo reaproveitável via `npx`; a extensão é uma camada de distribuição/UX 
 
 ## Arquitetura
 
+> Desde a Fase 5, este `src/` vive em `packages/mcp-server/src/` (monorepo). A árvore abaixo
+> mostra a estrutura interna do servidor; o `packages/extension/` é detalhado na Fase 5.
+
 ```
-src/
+packages/mcp-server/src/
 ├── cli.ts              # bin: despacha serve|login|status|validate|notebooks
 ├── index.ts            # reexports (uso como lib)
 ├── server.ts           # McpServer + registro das tools notebooklm_*
@@ -157,8 +160,10 @@ packages/
     └── src/browser/ensure.ts   # baixa Chromium sob demanda (globalStorage) se faltar
 ```
 
-- [ ] **Monorepo**: npm workspaces; mover `src/` → `packages/mcp-server`; build order
-      `mcp-server → extension`. Manter `npx`/`bin` do servidor funcionando.
+- [x] **Monorepo**: npm workspaces; `src/` → `packages/mcp-server` (via git mv, histórico
+      preservado); root `package.json` com `workspaces: ["packages/*"]` e scripts agregados
+      (`build`/`typecheck --workspaces`). Build/typecheck/smoke (8 tools via stdio) revalidados.
+      `bin`/`npx` do servidor intactos (name `notebooklm-mcp` mantido no package).
 - [ ] **Registro MCP no VS Code**: `contributes.mcpServerDefinitionProviders` (id) +
       `vscode.lm.registerMcpServerDefinitionProvider` retornando `McpStdioServerDefinition`
       (`command: node`, `args: [serverPath]`, `cwd`, `env`). `engines.vscode`: `^1.102.0`.
