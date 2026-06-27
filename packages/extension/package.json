@@ -77,7 +77,7 @@
     "publish": "npm run build && npm run vendor && vsce publish --no-dependencies"
   },
   "dependencies": {
-    "notebooklm-mcp": "*"
+    "@rinaldops/notebooklm-mcp": "*"
   },
   "devDependencies": {
     "@types/node": "^22.15.0",

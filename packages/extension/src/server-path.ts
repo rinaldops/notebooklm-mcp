@@ -16,6 +16,6 @@ export function resolveServerCli(): string {
   if (existsSync(vendored)) return vendored;
 
   // Fallback de desenvolvimento.
-  const pkgJson = require.resolve("notebooklm-mcp/package.json");
+  const pkgJson = require.resolve("@rinaldops/notebooklm-mcp/package.json");
   return path.join(path.dirname(pkgJson), "dist", "cli.js");
 }

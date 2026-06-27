@@ -13,6 +13,7 @@ Documentation & presentation polish.
 ### Added
 - Professional root `README.md` with a centered hero, badges (version, Marketplace, license, Node, MCP), and emoji section headings.
 - `CHANGELOG.md` (Keep a Changelog).
+- The MCP server is published to npm as the scoped package **`@rinaldops/notebooklm-mcp`** (the unscoped `notebooklm-mcp` is owned by an unrelated project). The `notebooklm-mcp` CLI command name is unchanged.
 
 ### Changed
 - Root documentation switched to **English-first**, with a Portuguese companion ([README.pt-br.md](README.pt-br.md)).

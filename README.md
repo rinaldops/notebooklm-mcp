@@ -42,16 +42,16 @@ citation-backed answers from your own documents, inside Claude Code and any MCP 
 
 ```bash
 # 1. Interactive login (once; opens the browser for you to log in to Google)
-npx notebooklm-mcp login
+npx @rinaldops/notebooklm-mcp login
 
 # 2. Register with Claude Code (consumed over stdio)
-claude mcp add notebooklm -- npx -y notebooklm-mcp
+claude mcp add notebooklm -- npx -y @rinaldops/notebooklm-mcp
 
 # Library management (optional; equivalent MCP tools also exist)
-npx notebooklm-mcp notebooks add "<url>" "My Notebook" "Description" "topic1,topic2"
-npx notebooklm-mcp notebooks list           # local library
-npx notebooklm-mcp notebooks remote         # all notebooks in the account
-npx notebooklm-mcp notebooks describe <url> # Smart Add: discovers the notebook's metadata
+npx @rinaldops/notebooklm-mcp notebooks add "<url>" "My Notebook" "Description" "topic1,topic2"
+npx @rinaldops/notebooklm-mcp notebooks list           # local library
+npx @rinaldops/notebooklm-mcp notebooks remote         # all notebooks in the account
+npx @rinaldops/notebooklm-mcp notebooks describe <url> # Smart Add: discovers the notebook's metadata
 ```
 
 > 💡 Prefer the editor experience? Install the **VS Code extension** in

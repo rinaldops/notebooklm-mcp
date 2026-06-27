@@ -42,16 +42,16 @@ nas suas próprias fontes, com citações, dentro do Claude Code e de qualquer c
 
 ```bash
 # 1. Login interativo (uma vez; abre o browser para você logar no Google)
-npx notebooklm-mcp login
+npx @rinaldops/notebooklm-mcp login
 
 # 2. Registrar no Claude Code (consome via stdio)
-claude mcp add notebooklm -- npx -y notebooklm-mcp
+claude mcp add notebooklm -- npx -y @rinaldops/notebooklm-mcp
 
 # Gerência da biblioteca (opcional, também há tools MCP equivalentes)
-npx notebooklm-mcp notebooks add "<url>" "Meu Notebook" "Descrição" "topico1,topico2"
-npx notebooklm-mcp notebooks list           # biblioteca local
-npx notebooklm-mcp notebooks remote         # todos os notebooks da conta
-npx notebooklm-mcp notebooks describe <url> # Smart Add: descobre metadados do notebook
+npx @rinaldops/notebooklm-mcp notebooks add "<url>" "Meu Notebook" "Descrição" "topico1,topico2"
+npx @rinaldops/notebooklm-mcp notebooks list           # biblioteca local
+npx @rinaldops/notebooklm-mcp notebooks remote         # todos os notebooks da conta
+npx @rinaldops/notebooklm-mcp notebooks describe <url> # Smart Add: descobre metadados do notebook
 ```
 
 > 💡 Prefere usar pelo editor? Instale a **extensão VS Code** em

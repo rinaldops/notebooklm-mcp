@@ -1,5 +1,5 @@
 {
-  "name": "notebooklm-mcp",
+  "name": "@rinaldops/notebooklm-mcp",
   "version": "0.1.2",
   "description": "Servidor MCP para Google NotebookLM via automação de browser (Patchright). Respostas ancoradas em fontes, sem API oficial.",
   "type": "module",
@@ -29,6 +29,16 @@
     "browser-automation"
   ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rinaldops/notebooklm-mcp.git",
+    "directory": "packages/mcp-server"
+  },
+  "homepage": "https://github.com/rinaldops/notebooklm-mcp#readme",
+  "bugs": "https://github.com/rinaldops/notebooklm-mcp/issues",
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.0",
     "patchright": "^1.52.0",
