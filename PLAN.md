@@ -185,12 +185,18 @@ packages/
       Pendências: escopo é por-workspace (não user-global); Claude Desktop
       (`claude_desktop_config.json`) ainda não é alvo; entrada usa caminho absoluto do CLI
       vendorado (reescrito a cada ativação, pois muda com a versão da extensão).
-- [ ] **Empacotamento**: tsup (extension host CJS + server ESM); Patchright como **external**
-      (não bundlar — lê `package.json` em runtime); vendorizar `node_modules` de produção no
-      `.vsix`; `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1` no build (Chromium NÃO entra no `.vsix`).
-- [ ] **Chromium sob demanda**: `postinstall` NÃO roda em extensão → baixar via código na
-      ativação/resolve, para `globalStorage`; preferir Chrome/Edge do sistema quando existir.
-- [ ] **Publicar**: `@vscode/vsce` → VS Code Marketplace (+ Open VSX). Escolher `publisher`.
+- [x] **Empacotamento**: `scripts/vendor-server.mjs` copia `mcp-server/dist` + instala deps de
+      produção em `packages/extension/vendor/mcp-server/node_modules` com
+      `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1` (Chromium fora). `resolveServerCli` acha o servidor
+      vendorado (`<ext>/vendor/...`) em produção e cai no node_modules do workspace em dev.
+      `npm run package` (build → vendor → `vsce package --no-dependencies`) gera o `.vsix`:
+      **7,5 MB**, 3112 arquivos, com `vendor/mcp-server` (dist + deps, patchright como arquivos,
+      SEM Chromium ~18 MB). Validado: o servidor vendorado roda standalone (`status` → ok).
+- [x] **Chromium sob demanda**: servidor usa Chrome do sistema (channel "chrome"); comando
+      `NotebookLM: Instalar navegador (Chromium)` baixa o Chromium do Patchright como fallback.
+      (Auto-download no `resolveMcpServerDefinition` fica como melhoria futura.)
+- [ ] **Publicar**: `@vscode/vsce` → VS Code Marketplace (+ Open VSX). Falta: definir o
+      `publisher` real (hoje placeholder `your-publisher-id`) e criar a conta de publisher.
 
 Riscos novos da Fase 5: ver itens 7–9 em "Riscos".
 

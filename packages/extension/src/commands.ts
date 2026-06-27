@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import * as path from "node:path";
 import { resolveServerCli } from "./server-path";
 import { autoConfigureWorkspace } from "./auto-config";
 
@@ -28,5 +29,17 @@ export function registerCommands(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("notebooklm.autoConfigure", () =>
       autoConfigureWorkspace(false),
     ),
+    vscode.commands.registerCommand("notebooklm.installBrowser", () => {
+      // O servidor usa o Chrome do sistema (channel "chrome") por padrão; este
+      // comando baixa o Chromium do Patchright como fallback. Roda no diretório
+      // do servidor (vendorado ou dev), onde o Patchright está instalado.
+      const serverDir = path.dirname(path.dirname(resolveServerCli()));
+      const terminal = vscode.window.createTerminal({
+        name: "NotebookLM: Instalar navegador",
+        cwd: serverDir,
+      });
+      terminal.show();
+      terminal.sendText("npx patchright install chromium");
+    }),
   );
 }

@@ -1,7 +1,9 @@
-# Fora do .vsix: fontes e configs de build (só `dist/` e manifesto vão no pacote).
+# Fora do .vsix: fontes e configs de build. O `vendor/` (servidor + deps de
+# produção) É INCLUÍDO — é o que torna o pacote autossuficiente.
 src/**
+scripts/**
 tsconfig.json
 tsup.config.ts
 .vscodeignore
 **/*.map
-node_modules/.cache/**
+**/.cache/**

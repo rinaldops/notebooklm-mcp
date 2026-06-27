@@ -3,9 +3,14 @@
   "displayName": "NotebookLM MCP",
   "description": "Servidor MCP para o Google NotebookLM, empacotado e auto-configurado como extensão.",
   "version": "0.1.0",
-  "publisher": "TODO-PUBLISHER",
+  "publisher": "your-publisher-id",
   "private": true,
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rinaldops/notebooklm-mcp.git",
+    "directory": "packages/extension"
+  },
   "engines": {
     "vscode": "^1.102.0",
     "node": ">=20"
@@ -41,6 +46,10 @@
       {
         "command": "notebooklm.autoConfigure",
         "title": "NotebookLM: Auto-configurar clientes MCP (Claude Code/Cursor)"
+      },
+      {
+        "command": "notebooklm.installBrowser",
+        "title": "NotebookLM: Instalar navegador (Chromium)"
       }
     ],
     "mcpServerDefinitionProviders": [
@@ -63,7 +72,8 @@
   "scripts": {
     "build": "tsup",
     "typecheck": "tsc --noEmit",
-    "package": "vsce package --no-dependencies"
+    "vendor": "node scripts/vendor-server.mjs",
+    "package": "npm run build && npm run vendor && vsce package --no-dependencies"
   },
   "dependencies": {
     "notebooklm-mcp": "*"

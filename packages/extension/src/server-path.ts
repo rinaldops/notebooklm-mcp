@@ -1,14 +1,21 @@
 import * as path from "node:path";
+import { existsSync } from "node:fs";
 
 /**
  * Caminho absoluto do CLI do servidor MCP (`dist/cli.js` do package
- * `notebooklm-mcp`). Em dev (workspace) resolve via node_modules symlinkado;
- * no `.vsix` resolverá o servidor vendorado (ver Fase 5: empacotamento).
+ * `notebooklm-mcp`).
  *
- * Usa o `package.json` (sem campo "exports") como âncora — funciona mesmo sem
- * o pacote expor um entrypoint para o CLI.
+ * Duas situações:
+ *  1. Produção (`.vsix` instalado): o servidor é VENDORADO em
+ *     `<extension>/vendor/mcp-server/` (ver `scripts/vendor-server.mjs`).
+ *     `__dirname` aqui é `<extension>/dist`, então subimos um nível.
+ *  2. Dev (workspace): resolve via node_modules symlinkado pelo workspace.
  */
 export function resolveServerCli(): string {
+  const vendored = path.join(__dirname, "..", "vendor", "mcp-server", "dist", "cli.js");
+  if (existsSync(vendored)) return vendored;
+
+  // Fallback de desenvolvimento.
   const pkgJson = require.resolve("notebooklm-mcp/package.json");
   return path.join(path.dirname(pkgJson), "dist", "cli.js");
 }

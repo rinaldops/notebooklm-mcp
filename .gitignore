@@ -12,3 +12,7 @@ data/
 # é versionada via README; os configs gerados, não).
 dev-sandbox/.mcp.json
 dev-sandbox/.cursor/
+
+# Empacotamento da extensão: servidor vendorado e o .vsix gerado.
+packages/extension/vendor/
+*.vsix
