@@ -1,0 +1,9 @@
+{
+  "description": "MCP server for Google NotebookLM, packaged and auto-configured as an extension.",
+  "cmd.login.title": "NotebookLM: Login (Google)",
+  "cmd.status.title": "NotebookLM: Session status",
+  "cmd.listRemote.title": "NotebookLM: List account notebooks",
+  "cmd.autoConfigure.title": "NotebookLM: Auto-configure MCP clients (Claude Code/Cursor)",
+  "cmd.installBrowser.title": "NotebookLM: Install browser (Chromium)",
+  "config.autoConfigure.desc": "On activation, writes/updates the MCP config for Claude Code and Cursor in the open workspace (.mcp.json and .cursor/mcp.json). Idempotent."
+}

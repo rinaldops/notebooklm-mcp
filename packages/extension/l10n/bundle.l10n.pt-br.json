@@ -1,0 +1,9 @@
+{
+  "NotebookLM: Login": "NotebookLM: Login",
+  "NotebookLM: Status": "NotebookLM: Status",
+  "NotebookLM: Account notebooks": "NotebookLM: Notebooks da conta",
+  "NotebookLM: Install browser": "NotebookLM: Instalar navegador",
+  "NotebookLM: open a folder/workspace to auto-configure the MCP clients.": "NotebookLM: abra uma pasta/workspace para auto-configurar os clientes MCP.",
+  "NotebookLM: could not locate the server ({0}).": "NotebookLM: não foi possível localizar o servidor ({0}).",
+  "NotebookLM auto-config — {0}": "NotebookLM auto-config — {0}"
+}

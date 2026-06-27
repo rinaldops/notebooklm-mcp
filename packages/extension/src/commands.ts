@@ -18,13 +18,13 @@ function runInTerminal(args: string[], name: string): void {
 export function registerCommands(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
     vscode.commands.registerCommand("notebooklm.login", () =>
-      runInTerminal(["login"], "NotebookLM: Login"),
+      runInTerminal(["login"], vscode.l10n.t("NotebookLM: Login")),
     ),
     vscode.commands.registerCommand("notebooklm.status", () =>
-      runInTerminal(["status"], "NotebookLM: Status"),
+      runInTerminal(["status"], vscode.l10n.t("NotebookLM: Status")),
     ),
     vscode.commands.registerCommand("notebooklm.listRemote", () =>
-      runInTerminal(["notebooks", "remote"], "NotebookLM: Notebooks da conta"),
+      runInTerminal(["notebooks", "remote"], vscode.l10n.t("NotebookLM: Account notebooks")),
     ),
     vscode.commands.registerCommand("notebooklm.autoConfigure", () =>
       autoConfigureWorkspace(false),
@@ -35,7 +35,7 @@ export function registerCommands(context: vscode.ExtensionContext): void {
       // do servidor (vendorado ou dev), onde o Patchright está instalado.
       const serverDir = path.dirname(path.dirname(resolveServerCli()));
       const terminal = vscode.window.createTerminal({
-        name: "NotebookLM: Instalar navegador",
+        name: vscode.l10n.t("NotebookLM: Install browser"),
         cwd: serverDir,
       });
       terminal.show();

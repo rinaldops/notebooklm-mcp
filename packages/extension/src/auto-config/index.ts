@@ -36,7 +36,7 @@ export async function autoConfigureWorkspace(silent = false): Promise<void> {
   if (!folder) {
     if (!silent) {
       vscode.window.showWarningMessage(
-        "NotebookLM: abra uma pasta/workspace para auto-configurar os clientes MCP.",
+        vscode.l10n.t("NotebookLM: open a folder/workspace to auto-configure the MCP clients."),
       );
     }
     return;
@@ -46,7 +46,9 @@ export async function autoConfigureWorkspace(silent = false): Promise<void> {
   try {
     entry = buildServerEntry();
   } catch (err) {
-    vscode.window.showErrorMessage(`NotebookLM: não foi possível localizar o servidor (${String(err)}).`);
+    vscode.window.showErrorMessage(
+      vscode.l10n.t("NotebookLM: could not locate the server ({0}).", String(err)),
+    );
     return;
   }
 
@@ -64,5 +66,5 @@ export async function autoConfigureWorkspace(silent = false): Promise<void> {
   if (silent && !changed) return;
 
   const summary = results.map((r) => `${r.label}: ${r.status}`).join(" | ");
-  vscode.window.showInformationMessage(`NotebookLM auto-config — ${summary}`);
+  vscode.window.showInformationMessage(vscode.l10n.t("NotebookLM auto-config — {0}", summary));
 }

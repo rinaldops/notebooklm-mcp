@@ -1,19 +1,18 @@
 {
   "name": "notebooklm-mcp-vscode",
   "displayName": "NotebookLM MCP",
-  "description": "Servidor MCP para o Google NotebookLM, empacotado e auto-configurado como extensão.",
+  "description": "%description%",
   "version": "0.1.0",
   "publisher": "your-publisher-id",
-  "private": true,
   "license": "MIT",
+  "l10n": "./l10n",
   "repository": {
     "type": "git",
     "url": "https://github.com/rinaldops/notebooklm-mcp.git",
     "directory": "packages/extension"
   },
   "engines": {
-    "vscode": "^1.102.0",
-    "node": ">=20"
+    "vscode": "^1.102.0"
   },
   "categories": [
     "AI",
@@ -33,23 +32,23 @@
     "commands": [
       {
         "command": "notebooklm.login",
-        "title": "NotebookLM: Login (Google)"
+        "title": "%cmd.login.title%"
       },
       {
         "command": "notebooklm.status",
-        "title": "NotebookLM: Status da sessão"
+        "title": "%cmd.status.title%"
       },
       {
         "command": "notebooklm.listRemote",
-        "title": "NotebookLM: Listar notebooks da conta"
+        "title": "%cmd.listRemote.title%"
       },
       {
         "command": "notebooklm.autoConfigure",
-        "title": "NotebookLM: Auto-configurar clientes MCP (Claude Code/Cursor)"
+        "title": "%cmd.autoConfigure.title%"
       },
       {
         "command": "notebooklm.installBrowser",
-        "title": "NotebookLM: Instalar navegador (Chromium)"
+        "title": "%cmd.installBrowser.title%"
       }
     ],
     "mcpServerDefinitionProviders": [
@@ -64,7 +63,7 @@
         "notebooklm.autoConfigureOnActivate": {
           "type": "boolean",
           "default": true,
-          "description": "Ao ativar, escreve/atualiza a config MCP do Claude Code e do Cursor no workspace aberto (.mcp.json e .cursor/mcp.json). Idempotente."
+          "description": "%config.autoConfigure.desc%"
         }
       }
     }

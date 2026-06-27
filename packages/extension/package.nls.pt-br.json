@@ -1,0 +1,9 @@
+{
+  "description": "Servidor MCP para o Google NotebookLM, empacotado e auto-configurado como extensão.",
+  "cmd.login.title": "NotebookLM: Login (Google)",
+  "cmd.status.title": "NotebookLM: Status da sessão",
+  "cmd.listRemote.title": "NotebookLM: Listar notebooks da conta",
+  "cmd.autoConfigure.title": "NotebookLM: Auto-configurar clientes MCP (Claude Code/Cursor)",
+  "cmd.installBrowser.title": "NotebookLM: Instalar navegador (Chromium)",
+  "config.autoConfigure.desc": "Ao ativar, escreve/atualiza a config MCP do Claude Code e do Cursor no workspace aberto (.mcp.json e .cursor/mcp.json). Idempotente."
+}
