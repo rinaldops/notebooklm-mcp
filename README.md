@@ -1,82 +1,117 @@
-# notebooklm-mcp
+<div align="center">
 
-Servidor **MCP** (Model Context Protocol) para o **Google NotebookLM**, em TypeScript/Node,
-via automação de browser com **Patchright**. Respostas ancoradas nas suas fontes (Gemini),
-sem API oficial. Pensado para o Claude Code e qualquer cliente MCP.
+# 📓 notebooklm-mcp
 
-> ⚠️ **Aviso.** Projeto não-oficial, sem afiliação com o Google. A automação de uma sessão
-> logada pode ser considerada acesso automatizado sob os Termos do NotebookLM, com risco à
-> conta. Use por sua conta e risco. Sujeito a limites de uso (ex.: ~50 perguntas/dia no plano free).
+**MCP (Model Context Protocol) server for Google NotebookLM** — source-grounded,
+citation-backed answers from your own documents, inside Claude Code and any MCP client.
 
-## Por que TS e não Python
+[![Version](https://img.shields.io/badge/version-0.1.1-2E75B6)](CHANGELOG.md)
+[![VS Code Marketplace](https://img.shields.io/visual-studio-marketplace/v/RinaldoPS.notebooklm-mcp-vscode?label=Marketplace&logo=visualstudiocode&logoColor=white&color=4078C0)](https://marketplace.visualstudio.com/items?itemName=RinaldoPS.notebooklm-mcp-vscode)
+[![License](https://img.shields.io/badge/license-MIT-375623)](LICENSE)
+[![Node](https://img.shields.io/badge/node-%3E%3D20-1F3864)](package.json)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![MCP](https://img.shields.io/badge/MCP-Model%20Context%20Protocol-6E56CF)](https://modelcontextprotocol.io)
 
-O público de MCP/Claude Code sempre tem Node; Python adiciona atrito de instalação
-(interpretador, venv, pip). Este projeto é um **port** da skill `notebooklm` (Python) para
-TS, mantendo a lógica de automação já validada. Distribuição via `npx`, sem dashboard.
+🇬🇧 English · 🇧🇷 [Português](README.pt-br.md)
 
-## Instalação e uso
+</div>
+
+> ⚠️ **Notice.** Unofficial project, not affiliated with Google. Automating a logged-in
+> session may be considered automated access under NotebookLM's Terms, with risk to your
+> account. Use at your own risk. Subject to usage limits (e.g. ~50 questions/day on the free plan).
+
+---
+
+## ✨ Highlights
+
+- **Source-grounded answers** — every reply comes from your uploaded documents (Gemini), drastically reducing hallucinations.
+- **Any MCP client** — works with Claude Code, Cursor, and anything that speaks the Model Context Protocol over stdio.
+- **No official API** — browser automation with [Patchright](https://github.com/Kaliiiiiiiiii-Vinyzu/patchright), reusing a logged-in Google session.
+- **Smart Add** — NotebookLM itself describes a notebook's name, content, and topics so your library stays accurate.
+- **Zero Python friction** — pure TypeScript/Node, distributed via `npx`. No interpreter, venv, or pip.
+
+## 📋 Prerequisites
+
+| Requirement | Notes |
+|-------------|-------|
+| **Node.js ≥ 20** | Runtime for the server and CLI. |
+| **Google account** | With access to your NotebookLM notebooks. |
+| **Chromium-based browser** | System Google Chrome by default; Patchright's Chromium can be installed on demand. |
+
+## 🚀 Installation & usage
 
 ```bash
-# 1. Login interativo (uma vez; abre o browser para você logar no Google)
+# 1. Interactive login (once; opens the browser for you to log in to Google)
 npx notebooklm-mcp login
 
-# 2. Registrar no Claude Code (consome via stdio)
+# 2. Register with Claude Code (consumed over stdio)
 claude mcp add notebooklm -- npx -y notebooklm-mcp
 
-# Gerência da biblioteca (opcional, também há tools MCP equivalentes)
-npx notebooklm-mcp notebooks add "<url>" "Meu Notebook" "Descrição" "topico1,topico2"
-npx notebooklm-mcp notebooks list          # biblioteca local
-npx notebooklm-mcp notebooks remote        # todos os notebooks da conta
-npx notebooklm-mcp notebooks describe <url> # Smart Add: descobre metadados do notebook
+# Library management (optional; equivalent MCP tools also exist)
+npx notebooklm-mcp notebooks add "<url>" "My Notebook" "Description" "topic1,topic2"
+npx notebooklm-mcp notebooks list           # local library
+npx notebooklm-mcp notebooks remote         # all notebooks in the account
+npx notebooklm-mcp notebooks describe <url> # Smart Add: discovers the notebook's metadata
 ```
 
-### Smart Add (catalogar com metadados automáticos)
+> 💡 Prefer the editor experience? Install the **VS Code extension** in
+> [packages/extension](packages/extension) — it registers the server and auto-configures
+> Claude Code / Cursor in your workspace.
 
-Fluxo recomendado para popular a biblioteca sem inventar descrições:
+### Smart Add (catalog with automatic metadata)
 
-1. `notebooks remote` (ou a tool `notebooklm_list_remote_notebooks`) → pega a URL.
-2. `notebooks describe <url>` (ou `notebooklm_describe_notebook`) → o próprio NotebookLM
-   descreve nome, conteúdo e tópicos.
-3. `notebooks add <url> <name> <description> <topics>` com base no passo 2.
+Recommended flow to populate the library without making up descriptions:
 
-## Tools expostas
+1. `notebooks remote` (or the `notebooklm_list_remote_notebooks` tool) → get the URL.
+2. `notebooks describe <url>` (or `notebooklm_describe_notebook`) → NotebookLM itself
+   describes the name, content, and topics.
+3. `notebooks add <url> <name> <description> <topics>` based on step 2.
 
-| Tool | Função |
-|------|--------|
-| `notebooklm_ask` | Pergunta a um notebook (ativo, por id ou por URL) |
-| `notebooklm_list_notebooks` | Lista a biblioteca local |
-| `notebooklm_list_remote_notebooks` | Descobre TODOS os notebooks da conta (raspa o painel) |
-| `notebooklm_describe_notebook` | Smart Add: pergunta ao notebook o que ele contém (nome/descrição/tópicos) |
-| `notebooklm_add_notebook` | Adiciona notebook |
-| `notebooklm_activate_notebook` | Define o notebook ativo |
-| `notebooklm_remove_notebook` | Remove notebook |
-| `notebooklm_auth_status` | Status da sessão |
+## 🧰 Exposed tools
 
-## Configuração (env)
+| Tool | Purpose |
+|------|---------|
+| `notebooklm_ask` | Ask a notebook (active, by id, or by URL) |
+| `notebooklm_list_notebooks` | List the local library |
+| `notebooklm_list_remote_notebooks` | Discover **all** notebooks in the account (scrapes the panel) |
+| `notebooklm_describe_notebook` | Smart Add: ask the notebook what it contains (name/description/topics) |
+| `notebooklm_add_notebook` | Add a notebook |
+| `notebooklm_activate_notebook` | Set the active notebook |
+| `notebooklm_remove_notebook` | Remove a notebook |
+| `notebooklm_auth_status` | Session status |
 
-| Variável | Default | Descrição |
-|----------|---------|-----------|
-| `NOTEBOOKLM_CONFIG_DIR` | `~/.notebooklm-mcp` | Diretório de dados/sessão |
-| `NOTEBOOKLM_HEADLESS` | `true` | Browser headless nas perguntas |
-| `NOTEBOOKLM_BROWSER_CHANNEL` | `chrome` | Canal do Chromium (`chrome`/`msedge`/...) |
-| `NOTEBOOKLM_DEFAULT_NOTEBOOK_URL` | — | Notebook padrão se nenhum ativo |
+## ⚙️ Configuration (env)
 
-Veja [PLAN.md](./PLAN.md) para o plano de desenvolvimento e o estado de cada parte.
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `NOTEBOOKLM_CONFIG_DIR` | `~/.notebooklm-mcp` | Data/session directory |
+| `NOTEBOOKLM_HEADLESS` | `true` | Headless browser for questions |
+| `NOTEBOOKLM_BROWSER_CHANNEL` | `chrome` | Chromium channel (`chrome`/`msedge`/...) |
+| `NOTEBOOKLM_DEFAULT_NOTEBOOK_URL` | — | Default notebook when none is active |
 
-## Dev
+## 🛠️ Development
 
-Monorepo com npm workspaces:
-- [packages/mcp-server](packages/mcp-server) — o servidor MCP (publicável via `npx`).
-- [packages/extension](packages/extension) — a extensão VS Code (registra/auto-configura o
-  servidor). Build com `tsup`; depurar com F5 (Extension Development Host).
+Monorepo with npm workspaces:
+
+- [packages/mcp-server](packages/mcp-server) — the MCP server (publishable via `npx`).
+- [packages/extension](packages/extension) — the VS Code extension (registers/auto-configures
+  the server). Built with `tsup`; debug with **F5** (Extension Development Host).
 
 ```bash
-npm install                 # instala todos os workspaces (a partir da raiz)
-npm run build               # builda todos os packages
+npm install                 # install all workspaces (from the root)
+npm run build               # build all packages
 npm run typecheck
 
-# Comandos do servidor (rodar dentro do package):
+# Server commands (run inside the package):
 cd packages/mcp-server
-npm run dev -- login        # login via tsx, sem build
-npm start                   # node dist/cli.js (após build)
+npm run dev -- login        # login via tsx, no build
+npm start                   # node dist/cli.js (after build)
 ```
+
+See [PLAN.md](./PLAN.md) for the development plan and the status of each part, and
+[CHANGELOG.md](./CHANGELOG.md) for release history.
+
+## 📄 License
+
+[MIT](LICENSE) © 2026 Rinaldo Paulino de Souza. Unofficial project, not affiliated with
+Google — use at your own risk; see the notice at the top.

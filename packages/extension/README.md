@@ -1,6 +1,15 @@
-# NotebookLM MCP (VS Code extension)
+<div align="center">
 
-🇧🇷 [Português](README.pt-br.md) · 🇬🇧 English
+# 📓 NotebookLM MCP (VS Code extension)
+
+[![VS Code Marketplace](https://img.shields.io/visual-studio-marketplace/v/RinaldoPS.notebooklm-mcp-vscode?label=Marketplace&logo=visualstudiocode&logoColor=white&color=2E75B6)](https://marketplace.visualstudio.com/items?itemName=RinaldoPS.notebooklm-mcp-vscode)
+[![Installs](https://img.shields.io/visual-studio-marketplace/i/RinaldoPS.notebooklm-mcp-vscode?label=installs&color=1F3864)](https://marketplace.visualstudio.com/items?itemName=RinaldoPS.notebooklm-mcp-vscode)
+[![License](https://img.shields.io/badge/license-MIT-375623)](https://github.com/rinaldops/notebooklm-mcp/blob/main/LICENSE)
+[![MCP](https://img.shields.io/badge/MCP-Model%20Context%20Protocol-6E56CF)](https://modelcontextprotocol.io)
+
+🇧🇷 [Português](https://github.com/rinaldops/notebooklm-mcp/blob/main/packages/extension/README.pt-br.md) · 🇬🇧 English
+
+</div>
 
 > **⚠️ Experimental — Important notice.** This project is an **unofficial,
 > community-maintained** integration for Google NotebookLM. It is **not

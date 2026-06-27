@@ -1,6 +1,6 @@
 {
   "name": "notebooklm-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Servidor MCP para Google NotebookLM via automação de browser (Patchright). Respostas ancoradas em fontes, sem API oficial.",
   "type": "module",
   "bin": {
