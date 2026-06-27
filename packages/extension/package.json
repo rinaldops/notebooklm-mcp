@@ -2,9 +2,10 @@
   "name": "notebooklm-mcp-vscode",
   "displayName": "NotebookLM MCP",
   "description": "%description%",
-  "version": "0.1.0",
-  "publisher": "your-publisher-id",
+  "version": "0.1.1",
+  "publisher": "RinaldoPS",
   "license": "MIT",
+  "icon": "icon.png",
   "l10n": "./l10n",
   "repository": {
     "type": "git",
@@ -72,7 +73,8 @@
     "build": "tsup",
     "typecheck": "tsc --noEmit",
     "vendor": "node scripts/vendor-server.mjs",
-    "package": "npm run build && npm run vendor && vsce package --no-dependencies"
+    "package": "npm run build && npm run vendor && vsce package --no-dependencies",
+    "publish": "npm run build && npm run vendor && vsce publish --no-dependencies"
   },
   "dependencies": {
     "notebooklm-mcp": "*"
