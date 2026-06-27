@@ -5,7 +5,7 @@
 **MCP (Model Context Protocol) server for Google NotebookLM** — source-grounded,
 citation-backed answers from your own documents, inside Claude Code and any MCP client.
 
-[![Version](https://img.shields.io/badge/version-0.1.1-2E75B6)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.1.2-2E75B6)](CHANGELOG.md)
 [![VS Code Marketplace](https://img.shields.io/visual-studio-marketplace/v/RinaldoPS.notebooklm-mcp-vscode?label=Marketplace&logo=visualstudiocode&logoColor=white&color=4078C0)](https://marketplace.visualstudio.com/items?itemName=RinaldoPS.notebooklm-mcp-vscode)
 [![License](https://img.shields.io/badge/license-MIT-375623)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D20-1F3864)](package.json)

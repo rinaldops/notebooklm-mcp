@@ -5,7 +5,7 @@
 **Servidor MCP (Model Context Protocol) para o Google NotebookLM** — respostas ancoradas
 nas suas próprias fontes, com citações, dentro do Claude Code e de qualquer cliente MCP.
 
-[![Versão](https://img.shields.io/badge/vers%C3%A3o-0.1.1-2E75B6)](CHANGELOG.md)
+[![Versão](https://img.shields.io/badge/vers%C3%A3o-0.1.2-2E75B6)](CHANGELOG.md)
 [![VS Code Marketplace](https://img.shields.io/visual-studio-marketplace/v/RinaldoPS.notebooklm-mcp-vscode?label=Marketplace&logo=visualstudiocode&logoColor=white&color=4078C0)](https://marketplace.visualstudio.com/items?itemName=RinaldoPS.notebooklm-mcp-vscode)
 [![Licença](https://img.shields.io/badge/licen%C3%A7a-MIT-375623)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D20-1F3864)](package.json)

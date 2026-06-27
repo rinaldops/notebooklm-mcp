@@ -2,7 +2,7 @@
   "name": "notebooklm-mcp-vscode",
   "displayName": "NotebookLM MCP",
   "description": "%description%",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "publisher": "RinaldoPS",
   "license": "MIT",
   "icon": "icon.png",
