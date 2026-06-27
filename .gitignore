@@ -7,3 +7,8 @@ dist/
 data/
 .notebooklm-mcp/
 .env
+
+# Artefatos gerados pela auto-config durante o teste F5 (a pasta dev-sandbox em si
+# é versionada via README; os configs gerados, não).
+dev-sandbox/.mcp.json
+dev-sandbox/.cursor/
