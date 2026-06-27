@@ -13,6 +13,11 @@ data/
 dev-sandbox/.mcp.json
 dev-sandbox/.cursor/
 
+# Auto-config gerada pela extensão na raiz do workspace (caminhos absolutos
+# específicos da máquina — não devem ser versionados).
+/.mcp.json
+/.cursor/
+
 # Empacotamento da extensão: servidor vendorado e o .vsix gerado.
 packages/extension/vendor/
 *.vsix
